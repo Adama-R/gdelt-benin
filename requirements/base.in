@@ -1,0 +1,15 @@
+pandas
+numpy
+requests
+beautifulsoup4
+pyarrow
+tqdm
+python-dotenv
+aiohttp
+aiofiles
+httpx
+tenacity
+fastapi
+uvicorn
+python-dotenv
+ipykernel
