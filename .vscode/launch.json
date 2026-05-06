@@ -18,6 +18,8 @@
                 "tests",
                 "--reload-exclude",
                 "dashboard",
+                "--reload-exclude-dir",
+                "requirements",
                 "--port",
                 "8000"
             ],

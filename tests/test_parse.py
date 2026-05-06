@@ -21,3 +21,13 @@ async def test_parse_invalid_zip():
 
     with pytest.raises(Exception):
         parse_gdelt_zip(b"not a zip")
+
+def test_apply_schema_event():
+    import pandas as pd
+    from parser import apply_gdelt_schema
+
+    df = pd.DataFrame([[1,2,3]])
+
+    result = apply_gdelt_schema(df, "event")
+
+    assert len(result.columns) > 0

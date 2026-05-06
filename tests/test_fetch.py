@@ -1,16 +1,24 @@
-def test_get_gdelt_files_valid_range():
-    from ingestion import get_gdelt_files
 
-    files = get_gdelt_files("20240101", "20240103")
+import pytest
+from fastapi import HTTPException
 
-    assert isinstance(files, list)
-    assert len(files) >= 1
-    assert all(f.endswith(".CSV.zip") for f in files)
+def test_generate_urls_event():
+    from fetch import generate_gdelt_urls
 
+    urls = generate_gdelt_urls("20250101", "20250102", "event")
 
-def test_get_gdelt_files_invalid_range():
-    from ingestion import get_gdelt_files
+    assert len(urls) == 2
+    assert "20250101" in urls[0]
 
-    files = get_gdelt_files("20250105", "20250101")
+def test_invalid_data_type():
+    from fetch import generate_gdelt_urls
 
-    assert files == []
+    with pytest.raises(HTTPException):
+        generate_gdelt_urls("20250101", "20250102", "invalid")
+
+def test_generate_mentions_urls():
+    from fetch import generate_gdelt_urls
+
+    urls = generate_gdelt_urls("20250101", "20250101", "mention")
+
+    assert len(urls) == 96  # 24h * 4

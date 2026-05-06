@@ -106,7 +106,7 @@ def analyze_gdelt(df: pd.DataFrame) -> dict:
     else:
         result["event_types"] = []
 
-    # 😊 Tone
+    # Tone
     if "tone" in df:
         result["tone"] = {
             "mean": float(df["tone"].mean()),

@@ -23,3 +23,15 @@ def test_filter_empty():
     result = filter_benin(df)
 
     assert result.empty
+
+def test_filter_benin_event():
+    import pandas as pd
+    from clean import filter_benin
+
+    df = pd.DataFrame({
+        "ActionGeo_CountryCode": ["BN", "FR"]
+    })
+
+    result = filter_benin(df, "event")
+
+    assert len(result) == 1
