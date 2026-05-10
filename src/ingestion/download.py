@@ -24,7 +24,7 @@ from tenacity import (
         )
     ),
 )
-async def download_file_stream(url: str, filepath: str, data_type: str, save_data: bool = True) -> str:
+async def download_file_stream(url: str, filename: str, data_type: str, save_data: bool = True) -> str:
     """
     Télécharge un fichier GDELT distant (ZIP) de manière asynchrone
     et l'enregistre localement selon son type.
@@ -63,11 +63,14 @@ async def download_file_stream(url: str, filepath: str, data_type: str, save_dat
           de charger tout le fichier en mémoire.
     """
     try:
+
+        output_path = Path()
+
         if save_data:
             base_path = Path(f"data/raw/{data_type}")
             base_path.mkdir(parents=True, exist_ok=True)
 
-            output_path = base_path / f"{filepath}.zip"
+            output_path = base_path / f"{filename}.zip"
 
         async with httpx.AsyncClient(
             timeout=60.0, headers={"User-Agent": "Mozilla/5.0"}
@@ -146,15 +149,15 @@ def download_file_stream_on_local(zipFile: str) -> pd.DataFrame:
     """
 
     try:
-        zip_path = Path(zipFile)
+        zip_file_path = Path(zipFile)
 
-        if not zip_path.exists():
+        if not zip_file_path.exists():
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Fichier ZIP introuvable.",
             )
 
-        if zip_path.is_dir():
+        if zip_file_path.is_dir():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Le chemin fourni est un dossier, pas un fichier ZIP.",
@@ -162,7 +165,7 @@ def download_file_stream_on_local(zipFile: str) -> pd.DataFrame:
 
         dfs = []
 
-        with zipfile.ZipFile(zip_path) as zf:
+        with zipfile.ZipFile(zip_file_path) as zf:
             file_list = zf.namelist()
 
             for f in file_list:
