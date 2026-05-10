@@ -1,0 +1,8 @@
+.env
+.venv
+.vscode
+.pytest_cache
+**/__pycache__/
+data
+pyrefly.toml
+*.pyc

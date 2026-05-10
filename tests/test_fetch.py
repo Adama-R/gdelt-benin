@@ -3,7 +3,7 @@ import pytest
 from fastapi import HTTPException
 
 def test_generate_urls_event():
-    from fetch import generate_gdelt_urls
+    from ingestion import generate_gdelt_urls
 
     urls = generate_gdelt_urls("20250101", "20250102", "event")
 
@@ -11,13 +11,13 @@ def test_generate_urls_event():
     assert "20250101" in urls[0]
 
 def test_invalid_data_type():
-    from fetch import generate_gdelt_urls
+    from ingestion import generate_gdelt_urls
 
     with pytest.raises(HTTPException):
         generate_gdelt_urls("20250101", "20250102", "invalid")
 
 def test_generate_mentions_urls():
-    from fetch import generate_gdelt_urls
+    from ingestion import generate_gdelt_urls
 
     urls = generate_gdelt_urls("20250101", "20250101", "mention")
 

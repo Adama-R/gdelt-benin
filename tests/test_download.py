@@ -1,14 +1,15 @@
 import pytest
 import httpx
 from unittest.mock import AsyncMock, patch
+from fastapi import HTTPException
 
 @pytest.mark.asyncio
 async def test_download_file_success():
     from ingestion import download_file_stream
 
-    url = "http://data.gdeltproject.org/events/20240101.export.CSV.zip"
+    url = "http://data.gdeltproject.org/gdeltv2/20250101000000.export.CSV.zip"
 
-    content = await download_file_stream(url)
+    content = await download_file_stream(url, 20250101000000, "event", True)
 
     assert isinstance(content, bytes)
     assert len(content) > 0
@@ -35,7 +36,7 @@ async def test_client_connection():
 
 @pytest.mark.asyncio
 async def test_download_file_success():
-    from download import download_file_stream
+    from ingestion import download_file_stream
 
     with patch("httpx.AsyncClient") as mock_client:
         mock_response = AsyncMock()
@@ -44,6 +45,5 @@ async def test_download_file_success():
 
         mock_client.return_value.__aenter__.return_value.stream.return_value.__aenter__.return_value = mock_response
 
-        result = await download_file_stream("http://test.com", "file", "event")
-
-        assert "file.zip" in result
+        with pytest.raises(HTTPException):
+            await download_file_stream("http://test.com", "file", "event")

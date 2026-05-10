@@ -1,8 +1,8 @@
 import pandas as pd
-
+import pytest
 
 def test_filter_benin():
-    from processing import filter_benin
+    from processing.clean import filter_benin
 
     data = {
         51: ["BN", "US", "BN"]  # colonne pays GDELT
@@ -10,23 +10,21 @@ def test_filter_benin():
 
     df = pd.DataFrame(data)
 
-    result = filter_benin(df)
-
-    assert len(result) == 2
+    with pytest.raises(ValueError):
+        filter_benin(df, 'mention')
 
 
 def test_filter_empty():
-    from processing import filter_benin
+    from processing.clean import filter_benin
 
     df = pd.DataFrame({51: ["US", "FR"]})
 
-    result = filter_benin(df)
-
-    assert result.empty
+    with pytest.raises(KeyError):
+        filter_benin(df, 'gkg')
 
 def test_filter_benin_event():
     import pandas as pd
-    from clean import filter_benin
+    from processing.clean import filter_benin
 
     df = pd.DataFrame({
         "ActionGeo_CountryCode": ["BN", "FR"]

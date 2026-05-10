@@ -14,8 +14,6 @@
                 "--reload",
                 "--reload-dir",
                 "src",
-                "--reload-dir",
-                "tests",
                 "--reload-exclude",
                 "dashboard",
                 "--reload-exclude",
