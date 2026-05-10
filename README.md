@@ -196,3 +196,5 @@ Pour quitter l'environnement virtuel et revenir à l'installation Python globale
 
 deactivate
 ```
+
+> Pour ce projet nous avons utilisé ChatGPT pour aller plus vite dans nos recherches.
