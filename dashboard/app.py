@@ -1,132 +1,132 @@
+
+
+# DASHBOARD INTERACTIF GDELT - BENIN
+
 import pandas as pd
-from dash import Dash, dcc, html, Input, Output
+import streamlit as st
 import plotly.express as px
 
-# Charger les données (veuillez changer la variables "PATH" selon votre ordinateur.)
-PATH = "C:/Users/adama/3D Objects/obsidiant/iSheero/Hackathon/gdelt-benin/data/processed/GDELT_DATA_BENIN_2025-1.csv"
 
-df = pd.read_csv(PATH, sep=",", encoding="latin1")
+# CONFIGURATION PAGE
 
-df["SQLDATE"] = pd.to_datetime(df["SQLDATE"], format="%Y%m%d")
+st.set_page_config(page_title="Dashboard Bénin - GDELT", layout="wide")
 
-app = Dash(__name__)
+st.title("Analyse des événements au Bénin")
 
-app.layout = html.Div([
-    html.H1("Dashboard GDELT - Crises et Relations"),
 
-    dcc.DatePickerRange(
-        id="date-picker",
-        start_date=df["SQLDATE"].min(),
-        end_date=df["SQLDATE"].max()
-    ),
+# CHARGEMENT DES DONNÉES
 
-    dcc.Dropdown(
-        options=[{"label": str(i), "value": i} for i in sorted(df["QuadClass"].dropna().unique())],
-        multi=True,
-        id="quad-filter",
-        placeholder="Filtrer par type d'événement"
-    ),
+# Veuillez changer le contenu de la variables "uploaded_file" afin de pointer vers vos données.
+uploaded_file = r"C:\Users\adama\AllCodeProjets\gdelt-benin\data\processed\Analyse_Globale_F.csv"
 
-    html.Label("Acteur 1"),
-    dcc.Dropdown(
-        options=[{"label": i, "value": i} for i in df["Actor1Name"].dropna().unique()],
-        multi=True,
-        id="actor1-filter"
-    ),
+df = pd.read_csv(uploaded_file)
 
-    html.Label("Recherche"),
-    dcc.Input(
-        id="search",
-        type="text",
-        placeholder="ex: gouvernement, police..."
-    ),
 
-    dcc.Graph(id="time-series"),
-    dcc.Graph(id="map"),
-    dcc.Graph(id="relations")
-])
 
-@app.callback(
-    [Output("time-series", "figure"),
-     Output("map", "figure"),
-     Output("relations", "figure")],
-    [Input("date-picker", "start_date"),
-     Input("date-picker", "end_date"),
-     Input("quad-filter", "value"),
-     Input("actor1-filter", "value"),
-     Input("search", "value")]
+# PRÉPARATION DES DONNÉES
+
+# Conversion de la date
+df["SQLDATE"] = pd.to_datetime(df["SQLDATE"], format="%Y%m%d", errors="coerce")
+
+
+# FILTRES
+
+st.sidebar.header("Filtres")
+
+# Filtre temporel
+date_min = df["SQLDATE"].min()
+date_max = df["SQLDATE"].max()
+
+date_range = st.sidebar.date_input(
+    "Choisir une période",
+    [date_min, date_max]
 )
-def update_graphs(start_date, end_date, quad_values, actors, search):
 
-    dff = df.copy()
+# Filtre acteur
+actors = st.sidebar.multiselect(
+    "Choisir Actor1",
+    options=df["Actor1Name"].dropna().unique()
+)
 
-    dff = dff[(dff["SQLDATE"] >= start_date) & (dff["SQLDATE"] <= end_date)]
+# Application des filtres
+filtered_df = df.copy()
 
-    if quad_values:
-        dff = dff[dff["QuadClass"].isin(quad_values)]
+if len(date_range) == 2:
+    filtered_df = filtered_df[
+        (filtered_df["SQLDATE"] >= pd.to_datetime(date_range[0])) &
+        (filtered_df["SQLDATE"] <= pd.to_datetime(date_range[1]))
+    ]
 
-    if actors:
-        dff = dff[dff["Actor1Name"].isin(actors)]
+if actors:
+    filtered_df = filtered_df[filtered_df["Actor1Name"].isin(actors)]
 
-    if search:
-        dff = dff[dff["Actor1Name"].str.contains(search, case=False, na=False)]
 
-    if dff.empty:
-        empty_fig = px.scatter(title="Aucune donnée disponible")
-        return empty_fig, empty_fig, empty_fig
+# 1. EVOLUTION TEMPORELLE DES EVENEMENTS
 
-    df_daily = dff.groupby("SQLDATE").agg({
-        "GoldsteinScale": "mean",
-        "AvgTone": "mean"
-    }).reset_index()
+st.subheader("Evolution des événements dans le temps")
 
-    fig_time = px.line(
-        df_daily,
-        x="SQLDATE",
-        y=["GoldsteinScale", "AvgTone"],
-        title="Évolution des crises"
-    )
+timeline = filtered_df.groupby(filtered_df["SQLDATE"].dt.to_period("M")).size().reset_index(name="Count")
+timeline["SQLDATE"] = timeline["SQLDATE"].astype(str)
 
-    try:
-        dff_map = dff.dropna(subset=["ActionGeo_Fullname"])
+fig1 = px.line(
+    timeline,
+    x="SQLDATE",
+    y="Count",
+    title="Nombre d'événements par mois"
+)
 
-        fig_map = px.scatter_geo(
-            dff_map,
-            locations="ActionGeo_Fullname",
-            locationmode="country names",
-            color="AvgTone",
-            size="GoldsteinScale",
-            hover_name="ActionGeo_Fullname",
-            title="Carte des événements"
-        )
-    except:
-        fig_map = px.scatter(title="Carte indisponible")
+st.plotly_chart(fig1, width='stretch')
 
-    try:
-        rel = dff[["Actor1Name", "Actor2Name"]].dropna()
 
-        if rel.empty:
-            fig_rel = px.scatter(title="Pas de relations disponibles")
-        else:
-            rel = rel.value_counts().reset_index(name="count").head(15)
-            rel["relation"] = rel["Actor1Name"] + " → " + rel["Actor2Name"]
+# 2. TYPES D’EVENEMENTS VS IMPACT
 
-            fig_rel = px.bar(
-                rel,
-                x="count",
-                y="relation",
-                orientation='h',
-                title="Relations entre acteurs"
-            )
-    except:
-        fig_rel = px.scatter(title="Erreur relations")
+st.subheader("Impact des types d'événements")
 
-    return fig_time, fig_map, fig_rel
+cross = pd.crosstab(filtered_df["Type_Evènement"], filtered_df["Impact_Evènement"]).reset_index()
 
-if __name__ == "__main__":
-    app.run(
-        host="127.0.0.1",
-        port=8050,
-        debug=False,
-        use_reloader=False
-    )
+fig2 = px.bar(
+    cross,
+    x="Type_Evènement",
+    y=cross.columns[1:],
+    title="Répartition des impacts par type d'événement",
+    barmode="group"
+)
+
+st.plotly_chart(fig2, width='stretch')
+
+
+# 3. ACTEURS LES PLUS ACTIFS
+
+st.subheader("Acteurs les plus actifs")
+
+actors_count = filtered_df["Actor1Name"].value_counts().head(10).reset_index()
+actors_count.columns = ["Actor", "Count"]
+
+fig3 = px.bar(
+    actors_count,
+    x="Count",
+    y="Actor",
+    orientation="h",
+    title="Top 10 des acteurs les plus actifs"
+)
+
+st.plotly_chart(fig3, width='stretch')
+
+
+# 4. SENTIMENT GLOBAL
+
+st.subheader("Sentiments exprimés par les médias")
+
+sentiment_count = filtered_df["Sentiment"].value_counts().reset_index()
+sentiment_count.columns = ["Sentiment", "Count"]
+
+fig4 = px.pie(
+    sentiment_count,
+    names="Sentiment",
+    values="Count",
+    title="Répartition des sentiments"
+)
+
+st.plotly_chart(fig4, width='stretch')
+
+
