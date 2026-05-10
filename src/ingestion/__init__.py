@@ -1,16 +1,17 @@
 from .fetch import generate_gdelt_urls
 from .filter import link_mentions_to_events
-from ..processing.clean import filter_benin
+from processing.clean import filter_benin
 from .download import download_file_stream, download_file_stream_on_local
 from .parse import parse_gdelt_zip, apply_gdelt_schema
 from .pipeline import fetch_and_parse, process_gdelt_pipeline_to_csv
-from ..core.constants import (
+from .loader import load_gdelt_data
+from core.constants import (
     GDELT_EVENT_COLUMNS,
     GDELT_GKG_COLUMNS,
     GDELT_MENTION_COLUMNS,
 )
 
-__all__ = [
+__all__: list[str] = [
     "filter_benin",
     "generate_gdelt_urls",
     "link_mentions_to_events",
@@ -22,5 +23,6 @@ __all__ = [
     "GDELT_EVENT_COLUMNS",
     "GDELT_GKG_COLUMNS",
     "GDELT_MENTION_COLUMNS",
-    "apply_gdelt_schema"
+    "apply_gdelt_schema",
+    "load_gdelt_data"
 ]
