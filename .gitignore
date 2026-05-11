@@ -3,6 +3,7 @@
 .vscode
 .coverage
 .pytest_cache
+.github/dependabot.yml
 __pycache__
 **/__pycache__/
 **/**/__pycache__/
