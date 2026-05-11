@@ -2,7 +2,10 @@
 .venv
 .vscode
 .pytest_cache
+__pycache__
 **/__pycache__/
-data
+**/**/__pycache__/
+data/raw/
+data/processed/
 pyrefly.toml
 *.pyc
