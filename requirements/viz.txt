@@ -124,8 +124,10 @@ plotly==5.22.0
     #   -c requirements/constraints.txt
     #   -r requirements/viz.in
     #   dash
-protobuf==7.34.1
-    # via streamlit
+protobuf==6.33.6
+    # via
+    #   -c requirements/constraints.txt
+    #   streamlit
 pyarrow==15.0.2
     # via
     #   -c requirements/constraints.txt
@@ -168,7 +170,9 @@ six==1.17.0
 smmap==5.0.3
     # via gitdb
 starlette==1.0.0
-    # via streamlit
+    # via
+    #   -c requirements/constraints.txt
+    #   streamlit
 streamlit==1.57.0
     # via
     #   -c requirements/constraints.txt

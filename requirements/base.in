@@ -16,3 +16,4 @@ ipykernel
 google-cloud-bigquery
 newspaper3k
 lxml-html-clean
+starlette>=0.46.0
