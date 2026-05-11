@@ -17,7 +17,7 @@ st.title("Analyse des événements au Bénin")
 # CHARGEMENT DES DONNÉES
 
 # Veuillez changer le contenu de la variables "uploaded_file" afin de pointer vers vos données.
-uploaded_file = r"C:\Users\adama\AllCodeProjets\gdelt-benin\data\processed\Analyse_Globale_F.csv"
+uploaded_file = r"C:\Users\adama\AllCodeProjets\gdelt-benin\data\Analyse_Globale_F.csv"
 
 df = pd.read_csv(uploaded_file)
 
