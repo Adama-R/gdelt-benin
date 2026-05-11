@@ -1,6 +1,6 @@
 import pandas as pd
 from .download import download_file_stream_on_local
-from core.constants import (
+from ..core.constants import (
     GDELT_EVENT_COLUMNS,
     GDELT_GKG_COLUMNS,
     GDELT_MENTION_COLUMNS,
@@ -58,7 +58,7 @@ def apply_gdelt_schema(df: pd.DataFrame, data_type: str) -> pd.DataFrame:
     elif data_type == "gkg":
         df.columns = GDELT_GKG_COLUMNS
 
-    elif data_type == "mentions":
+    elif data_type == "mention":
         df.columns = GDELT_MENTION_COLUMNS
 
     return df
