@@ -136,7 +136,7 @@ uv sync --all-groups
 
 ```bash
 
-uv run uvicorn src.api.main:app --reload
+uv run uvicorn api.main:app --reload
 
 ```
 

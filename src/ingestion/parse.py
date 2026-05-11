@@ -1,6 +1,6 @@
 import pandas as pd
-from .download import download_file_stream_on_local
-from ..core.constants import (
+from ingestion.download import download_file_stream_on_local
+from core.constants import (
     GDELT_EVENT_COLUMNS,
     GDELT_GKG_COLUMNS,
     GDELT_MENTION_COLUMNS,

@@ -1,9 +1,10 @@
-# from typing import Literal
+# src/api/routers/analytics.py
+
 import pandas as pd
 from fastapi import APIRouter, HTTPException
 
-from . import GDELT_PREFIX, GDELT_BENIN, GDELT_ML_DATA, preprocess_gdelt, analyze_gdelt
-
+from analysis.metrics import preprocess_gdelt, analyze_gdelt
+from core.constants import GDELT_PREFIX, GDELT_BENIN, GDELT_ML_DATA
 
 router = APIRouter(prefix=f"{GDELT_PREFIX}/analytics", tags=["Analytics"])
 

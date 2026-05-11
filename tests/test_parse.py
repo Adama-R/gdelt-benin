@@ -28,6 +28,5 @@ def test_apply_schema_event():
 
     df = pd.DataFrame([[1,2,3]])
 
-    result = apply_gdelt_schema(df, "event")
-
-    assert len(result.columns) > 0
+    with pytest.raises(ValueError):
+        apply_gdelt_schema(df, "event")

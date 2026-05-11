@@ -236,19 +236,5 @@ viz = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 pythonpath = ["src"]
-
-[pytest]
-# Dossier racine de ton code source
-pythonpath = ["src"]
-
-# Dossier où sont les tests
 testpaths = ["tests"]
-
-# Nom des fichiers de tests
-python_files = true
-
-# Activer les warnings et afficher les logs utiles
-addopts = ["-ra -q -s -v"]
-
-# Coloration de la sortie
---color=["yes"]
+addopts = "-ra -q -s -v --color=yes"

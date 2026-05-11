@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from . import HEALTH_PREFIX
+from core.constants import HEALTH_PREFIX
 
 router = APIRouter(prefix=HEALTH_PREFIX, tags=["Health"])
 

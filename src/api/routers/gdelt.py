@@ -1,19 +1,15 @@
-from typing import List, Literal
+from typing import Literal, Any
 from pathlib import Path
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException
 import pandas as pd
 from datetime import datetime
 
-from . import (
-    load_gdelt_data,
-    link_mentions_to_events,
-    process_gdelt_pipeline_to_csv,
-    generate_gdelt_urls,
-    generate_local_gdelt_paths,
-    PipelineResponse,
-    GDELT_PREFIX,
-    GDELT_BENIN,
-)
+from core.constants import GDELT_BENIN, GDELT_PREFIX
+from api.schemas.gdelt import PipelineResponse
+from ingestion.fetch import generate_gdelt_urls, generate_local_gdelt_paths
+from ingestion.pipeline import process_gdelt_pipeline_to_csv
+from ingestion.loader import load_gdelt_data
+from ingestion.filter import link_mentions_to_events
 
 
 router = APIRouter(prefix=GDELT_PREFIX, tags=["GDELT"])
@@ -26,11 +22,11 @@ router = APIRouter(prefix=GDELT_PREFIX, tags=["GDELT"])
     description="Télécharge, parse et filtre les données GDELT (Events, GKG, Mentions).",
 )
 async def get_benin_data(
-    start_date: str,
-    end_date: str,
+    start_date: datetime,
+    end_date: datetime,
     dataType: Literal["event", "gkg", "mention"] = "event",
     save_data: bool = True,
-):
+)-> Any:
     """
     Pipeline complet de récupération et traitement des données GDELT pour le Bénin.
 

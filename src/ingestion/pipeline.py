@@ -1,10 +1,11 @@
 import pandas as pd
-from typing import Literal, Optional
+from typing import Optional
 from pathlib import Path
 from fastapi import HTTPException
 
-from . import apply_gdelt_schema, parse_gdelt_zip, download_file_stream, download_file_stream_on_local, filter_benin
-
+from ingestion.parse import apply_gdelt_schema, parse_gdelt_zip
+from ingestion.download import download_file_stream, download_file_stream_on_local
+from processing.clean import filter_benin
 
 async def fetch_and_parse(
     url_zipPath: str, data_type: str, save: bool = True

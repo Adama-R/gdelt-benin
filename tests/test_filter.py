@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 from fastapi import HTTPException
-from ingestion import link_mentions_to_events
+from ingestion.filter import link_mentions_to_events
 
 def test_link_mentions_to_events():
     events = pd.DataFrame({

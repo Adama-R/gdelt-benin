@@ -4,13 +4,13 @@ import subprocess
 from fastapi import FastAPI
 from pathlib import Path
 
-from .routers import gdelt, health, analytics
-from .routers.dashboard import router as dashboard_router
+from api.routers import gdelt, health, analytics
+from api.routers.dashboard import router as dashboard_router
 
 app = FastAPI(title="GDELT Benin API")
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-dash_file = BASE_DIR / "dashboard" / "app.py"
+BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
+dash_file: Path = BASE_DIR / "dashboard" / "app.py"
 
 dash_process = None
 
