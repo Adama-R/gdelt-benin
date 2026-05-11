@@ -24,6 +24,9 @@ def start_dash():
 
     dash_process = subprocess.Popen([
         sys.executable,
+        "-m",
+        "streamlit",
+        "run",
         str(dash_file)
     ])
 
