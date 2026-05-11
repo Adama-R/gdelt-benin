@@ -12,8 +12,8 @@ def generate_gdelt_urls(start_date: str, end_date: str, data_type: str) -> list[
     de la plage de dates fournie.
 
     Args:
-        start_date (str): Date de début au format 'YYYYMMDD'.
-        end_date (str): Date de fin au format 'YYYYMMDD'.
+        start_date (str): Date de début au format 'YYYYMMDDHHMMSS'.
+        end_date (str): Date de fin au format 'YYYYMMDDHHMMSS'.
         data_type (str): Type de données GDELT à récupérer.
             Valeurs autorisées :
                 - "event"
@@ -35,11 +35,11 @@ def generate_gdelt_urls(start_date: str, end_date: str, data_type: str) -> list[
         - GDELT peut ne pas avoir de données pour certaines dates.
 
     Example:
-        >>> generate_gdelt_urls("20250101", "20250103", "event")
+        >>> generate_gdelt_urls("20250101000000", "20250103000000", "event")
         [
-            "http://data.gdeltproject.org/events/20250101.export.CSV.zip",
-            "http://data.gdeltproject.org/events/20250102.export.CSV.zip",
-            "http://data.gdeltproject.org/events/20250103.export.CSV.zip"
+            "http://data.gdeltproject.org/gdeltv2/20250101000000.export.CSV.zip",
+            "http://data.gdeltproject.org/gdeltv2/20250102000000.export.CSV.zip",
+            "http://data.gdeltproject.org/gdeltv2/20250103000000.export.CSV.zip"
         ]
     """
 
@@ -52,15 +52,15 @@ def generate_gdelt_urls(start_date: str, end_date: str, data_type: str) -> list[
 
         data_type = data_type.lower()
 
-        base_urls = {
-            "event": "http://data.gdeltproject.org/events/",
-            "gkg": "http://data.gdeltproject.org/gkg/",
+        base_urls: dict[str, str] = {
+            "event": "http://data.gdeltproject.org/gdeltv2/",
+            "gkg": "http://data.gdeltproject.org/gdeltv2/",
             "mention": "http://data.gdeltproject.org/gdeltv2/",
         }
 
-        patterns = {
-            "event": "{date}.export.CSV.zip",
-            "gkg": "{date}.gkg.csv.zip",
+        patterns: dict[str, str] = {
+            "event": "{datetime}.export.CSV.zip",
+            "gkg": "{datetime}.gkg.csv.zip",
             "mention": "{datetime}.mentions.CSV.zip",
         }
 
@@ -70,13 +70,16 @@ def generate_gdelt_urls(start_date: str, end_date: str, data_type: str) -> list[
                 detail="Type de données invalide. Choisir parmi: event, gkg, mention.",
             )
 
+        start = None
+        end = None
+
         try:
-            start = datetime.strptime(start_date, "%Y%m%d")
-            end = datetime.strptime(end_date, "%Y%m%d")
+            start = datetime.strptime(start_date, "%Y%m%d%H%M%S")
+            end = datetime.strptime(end_date, "%Y%m%d%H%M%S")
         except ValueError:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Format de date invalide. Utiliser YYYYMMDD.",
+                detail="Format de date invalide. Utiliser YYYYMMDDHHMMSS.",
             )
 
         if start > end:
@@ -91,23 +94,16 @@ def generate_gdelt_urls(start_date: str, end_date: str, data_type: str) -> list[
                 detail="Intervalle trop grand (max 1 an recommandé).",
             )
 
-        urls = []
-        current = start
+        urls: list[str] = []
+        current: datetime = start
 
         while current <= end:
-            if data_type == "mention":
-                for hour in range(24):
-                    for minute in [0, 15, 30, 45]:
-                        dt = current.replace(hour=hour, minute=minute, second=0)
-                        date_str = dt.strftime("%Y%m%d%H%M%S")
-                        url = base_urls[data_type] + patterns[data_type].format(datetime=date_str)
-                        urls.append(url)
-            else:
-                date_str = current.strftime("%Y%m%d")
-                url = base_urls[data_type] + patterns[data_type].format(date=date_str)
-                urls.append(url)
-            current += timedelta(days=1)
-
+            # Arrondi des minutes à 0, 15, 30, 45
+            minute = (current.minute // 15) * 15
+            dt = current.replace(minute=minute, second=0)
+            date_str = dt.strftime("%Y%m%d%H%M%S")
+            urls.append(base_urls[data_type] + patterns[data_type].format(datetime=date_str))
+            current += timedelta(minutes=15)
         return urls
 
     except HTTPException:
@@ -134,8 +130,8 @@ def generate_local_gdelt_paths(
         data/raw/{data_type}/{date}.zip
 
     Args:
-        start_date (str): Date de début au format 'YYYYMMDD'.
-        end_date (str): Date de fin au format 'YYYYMMDD'.
+        start_date (str): Date de début au format 'YYYYMMDDHHMMSS'.
+        end_date (str): Date de fin au format 'YYYYMMDDHHMMSS'.
         data_type (str): Type de données ('event', 'gkg', 'mention').
         base_dir (str): Répertoire racine des données.
 
@@ -162,13 +158,16 @@ def generate_local_gdelt_paths(
                 detail="Type invalide: event, gkg, mention",
             )
 
+        start = datetime()
+        end = datetime()
+
         try:
-            start = datetime.strptime(start_date, "%Y%m%d")
-            end = datetime.strptime(end_date, "%Y%m%d")
+            start = datetime.strptime(start_date, "%Y%m%d%H%M%S")
+            end = datetime.strptime(end_date, "%Y%m%d%H%M%S")
         except ValueError:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Format date invalide (YYYYMMDD)",
+                detail="Format date invalide (YYYYMMDDHHMMSS)",
             )
 
         if start > end:
@@ -189,7 +188,7 @@ def generate_local_gdelt_paths(
         current = start
 
         while current <= end:
-            filename = current.strftime("%Y%m%d") + ".zip"
+            filename = current.strftime("%Y%m%d%H%M%S") + ".zip"
             file_path = base_path / filename
 
             if file_path.exists():
