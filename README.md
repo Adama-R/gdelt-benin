@@ -198,4 +198,6 @@ Pour quitter l'environnement virtuel et revenir à l'installation Python globale
 deactivate
 ```
 
+> Voici le chemin du dashboard produit lors de ce travail: [dashboard](https://gdelt-benin-njraxhr5graehiofdbyrfc.streamlit.app/)
+
 > Pour ce projet nous avons utilisé ChatGPT pour aller plus vite dans nos recherches.
