@@ -22,8 +22,8 @@ router = APIRouter(prefix=GDELT_PREFIX, tags=["GDELT"])
     description="Télécharge, parse et filtre les données GDELT (Events, GKG, Mentions).",
 )
 async def get_benin_data(
-    start_date: datetime,
-    end_date: datetime,
+    start_date: str,
+    end_date: str,
     dataType: Literal["event", "gkg", "mention"] = "event",
     save_data: bool = True,
 )-> Any:
