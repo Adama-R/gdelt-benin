@@ -27,7 +27,7 @@ async def test_download_file_invalid_url():
 
 @pytest.mark.asyncio
 async def test_client_connection():
-    url = "http://data.gdeltproject.org/events/20250101.export.CSV.zip"
+    url = "http://data.gdeltproject.org/gdeltv2/20250101000000.export.CSV.zip"
 
     async with httpx.AsyncClient() as client:
         r = await client.get(url)
