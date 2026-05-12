@@ -153,7 +153,7 @@ starlette==1.0.0
 streamlit==1.57.0
 tenacity==9.1.4
 threadpoolctl==3.6.0
-tinysegmenter==0.3
+tinysegmenter==0.4
 tldextract==5.3.1
 toml==0.10.2
 tornado==6.5.5
