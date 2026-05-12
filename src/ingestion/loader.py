@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 from fastapi import HTTPException, status
 
-from . import parse_gdelt_zip, apply_gdelt_schema
+from ingestion.parse import parse_gdelt_zip, apply_gdelt_schema
 
 
 def load_gdelt_data(paths: List[str], data_type: str) -> pd.DataFrame:
