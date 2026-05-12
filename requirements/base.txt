@@ -192,6 +192,7 @@ proto-plus==1.27.2
     # via google-api-core
 protobuf==6.33.6
     # via
+    #   -c requirements/constraints.txt
     #   google-api-core
     #   googleapis-common-protos
     #   grpcio-status
@@ -274,7 +275,10 @@ tenacity==9.1.4
     #   -c requirements/constraints.txt
     #   -r requirements/base.in
 tinysegmenter==0.3
-    # via newspaper3k
+    # via
+    #   -c requirements/constraints.txt
+    #   -r requirements/base.in
+    #   newspaper3k
 tldextract==5.3.1
     # via newspaper3k
 tornado==6.5.5

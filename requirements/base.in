@@ -15,5 +15,6 @@ python-dotenv
 ipykernel
 google-cloud-bigquery
 newspaper3k
+tinysegmenter
 lxml-html-clean
-starlette>=0.46.0
+starlette
