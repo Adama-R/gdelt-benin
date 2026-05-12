@@ -4,6 +4,7 @@
 
 import pandas as pd
 import streamlit as st
+from pathlib import Path
 import plotly.express as px
 
 
@@ -16,10 +17,15 @@ st.title("Analyse des événements au Bénin")
 
 # CHARGEMENT DES DONNÉES
 
-# Veuillez changer le contenu de la variables "uploaded_file" afin de pointer vers vos données.
-uploaded_file = r"C:\Users\adama\AllCodeProjets\gdelt-benin\data\Analyse_Globale_F.csv"
+BASE_DIR: Path = Path(__file__).resolve().parent.parent
 
-df = pd.read_csv(uploaded_file)
+csv_file: Path = BASE_DIR / "data" / "Analyse_Globale_F.csv"
+
+if not csv_file.exists():
+    st.error(f"Fichier introuvable : {csv_file}")
+    st.stop()
+
+df = pd.read_csv(csv_file)
 
 
 
