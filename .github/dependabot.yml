@@ -1,0 +1,20 @@
+version: 2
+
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+    ignore:
+      - dependency-name: "pytest"
+        update-types:
+          - "version-update:semver-major"
+
+      - dependency-name: "pytest-asyncio"
+        update-types:
+          - "version-update:semver-major"
+
+      - dependency-name: "black"
+        update-types:
+          - "version-update:semver-major"
