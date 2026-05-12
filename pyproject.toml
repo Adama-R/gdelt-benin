@@ -96,7 +96,7 @@ dependencies = [
     "plotly==5.22.0",
     "prompt-toolkit==3.0.52",
     "propcache==0.4.1",
-    "proto-plus==1.27.2",
+    "proto-plus==1.28.0",
     "protobuf==6.33.6",
     "psutil==7.2.2",
     "pure-eval==0.2.3",
